@@ -20,12 +20,12 @@
                 <MenuItem Header="Exit"/>
             </MenuItem>
             <MenuItem Header="To Do List">
-                <MenuItem Header="Add Root TDL"/>
-                <MenuItem Header="Add Sub-TDL"/>
-                <MenuItem Header="Edit"/>
-                <MenuItem Header="Delete"/>
-                <MenuItem Header="Move Up"/>
-                <MenuItem Header="Move Down"/>
+                <MenuItem Header="Add Root TDL" Command="{Binding AddRootTDLCommand}"/>
+                <MenuItem Header="Add Sub-TDL" Command="{Binding AddSubTDLCommand}"/>
+                <MenuItem Header="Edit" Command="{Binding EditTDLCommand}"/>
+                <MenuItem Header="Delete" Command="{Binding DeleteTDLCommand}"/>
+                <MenuItem Header="Move Up" Command="{Binding MoveUpTDLCommand}"/>
+                <MenuItem Header="Move Down" Command="{Binding MoveDownTDLCommand}"/>
                 <MenuItem Header="Change Path"/>
             </MenuItem>
             <MenuItem Header="Task">
@@ -61,16 +61,15 @@
                 </Grid.RowDefinitions>
                 
                 <Grid Grid.Row="0" Margin="5">
-                    <TreeView>
-                        <TreeViewItem Header="RC">
-                            <TreeViewItem Header="Tema 3"/>
-                        </TreeViewItem>
-                        <TreeViewItem Header="MVP">
-
-                        </TreeViewItem>
-                        <TreeViewItem Header="IA">
-
-                        </TreeViewItem>
+                    <TreeView ItemsSource="{Binding Context.Database.RootToDoLists}" SelectedItemChanged="TreeView_SelectedItemChanged">
+                        <TreeView.ItemTemplate>
+                            <HierarchicalDataTemplate ItemsSource="{Binding ToDoLists}">
+                                <WrapPanel Orientation="Horizontal">
+                                    <Image Source="{Binding IconPath}" Height="20" Width="20"/>
+                                    <Label Content="{Binding Name, Mode=TwoWay}"/>
+                                </WrapPanel>
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
                     </TreeView>
                 </Grid>
                 

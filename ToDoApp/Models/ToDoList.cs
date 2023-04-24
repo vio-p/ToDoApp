@@ -15,11 +15,17 @@ namespace ToDoApp.Models
         public string Name { get; set; }
         [XmlAttribute]
         public string IconPath { get; set; }
+        [XmlAttribute]
+        public string ParentName { get; set; }
         [XmlArray]
         public ObservableCollection<ToDoList> ToDoLists { get; set; }
         [XmlArray]
         public ObservableCollection<Task> Tasks { get; set; }
-
-
+        
+        public ToDoList()
+        {
+            ToDoLists = new ObservableCollection<ToDoList>();
+            Tasks = new ObservableCollection<Task>();
+        }
     }
 }

@@ -1,0 +1,45 @@
+﻿<Window x:Class="ToDoApp.Views.ToDoListView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ToDoApp.Views"
+        mc:Ignorable="d"
+        Title="To Do List" Height="300" Width="450" FontSize="13">
+
+    <Grid Margin="20,20,20,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Center">
+            <Label Content="Name: "/>
+            <TextBox Width="250" VerticalContentAlignment="Center" Text="{Binding Path=Name, UpdateSourceTrigger=PropertyChanged}"/>
+        </StackPanel>
+        
+        <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+            <Label Content="Parent: "/>
+            <Label Content="{Binding ParentName}"/>
+        </StackPanel>
+
+        <Label Grid.Row="2"  Content="Icon:"/>
+        <ListBox Grid.Row="3" ItemsSource="{Binding IconPaths}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="IconListBox_SelectionChanged">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Rows="1"/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Image Source="{Binding}" Margin="2"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <Button Grid.Row="4" Content="{Binding Context.ActionType}" Command="{Binding ActionButtonCommand}" Padding="5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    </Grid>
+</Window>

@@ -16,18 +16,19 @@ using ToDoApp.ViewModels;
 namespace ToDoApp.Views
 {
     /// <summary>
-    /// Interaction logic for MainView.xaml
+    /// Interaction logic for AddToDoListView.xaml
     /// </summary>
-    public partial class MainView : Window
+    public partial class ToDoListView : Window
     {
-        public MainView()
+        public ToDoListView(Context context)
         {
+            DataContext = new ToDoListViewModel(context);
             InitializeComponent();
         }
 
-        private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        private void IconListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            (DataContext as MainViewModel).TreeView_SelectedItemChanged(sender, e);
+            (DataContext as ToDoListViewModel).IconListBox_SelectionChanged(sender, e);
         }
     }
 }

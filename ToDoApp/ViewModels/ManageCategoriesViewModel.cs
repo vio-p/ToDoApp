@@ -16,23 +16,22 @@ namespace ToDoApp.ViewModels
 {
     public class ManageCategoriesViewModel : ViewModelBase
     {
+        public Context Context { get; set; }
         public ObservableCollection<Category> Categories { get; set; }
         public ICommand SaveChangesCommand { get; }
 
-        private readonly string _categoriesFilePath;
         private int _lastCategoryId;
 
-        public ManageCategoriesViewModel()
+        public ManageCategoriesViewModel(Context context)
         {
-            _categoriesFilePath = "categories.xml";
-            if (!File.Exists(_categoriesFilePath))
+            Context = context;
+            Categories = Context.Database.Categories;
+            _lastCategoryId = 0;
+            if (Categories.Count != 0)
             {
-                Categories = new ObservableCollection<Category>();
-                SerializationActions.Serialize(Categories, _categoriesFilePath);
+                _lastCategoryId = Categories.Last().Id;
             }
-            Categories = SerializationActions.Deserialize<ObservableCollection<Category>>("categories.xml");
-            _lastCategoryId = Categories.Last().Id;
-            SaveChangesCommand = new ActionCommand(SaveChanges);
+            SaveChangesCommand = new RelayCommand(SaveChanges);
         }
 
         // command actions
@@ -61,7 +60,7 @@ namespace ToDoApp.ViewModels
             {
                 _lastCategoryId = Categories.Last().Id;
             }
-            SerializationActions.Serialize(Categories, _categoriesFilePath);
+            SerializationActions.Serialize(Context.Database, Context.Database.Name + ".xml");
             _ = MessageBox.Show("Your changes have been saved!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 

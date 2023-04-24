@@ -20,8 +20,9 @@ namespace ToDoApp.Views
     /// </summary>
     public partial class ManageCategoriesView : Window
     {
-        public ManageCategoriesView()
+        public ManageCategoriesView(Context context)
         {
+            DataContext = new ManageCategoriesViewModel(context);
             InitializeComponent();
         }
 
