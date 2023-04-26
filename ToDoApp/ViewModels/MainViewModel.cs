@@ -16,7 +16,24 @@ namespace ToDoApp.ViewModels
     {
         public ViewModelContext Context { get; set; }
 
-        #region Commands
+        private Visibility _statisticsVisibility = Visibility.Visible;
+        public Visibility StatisticVisibility
+        {
+            get => _statisticsVisibility;
+            set
+            {
+                _statisticsVisibility = value;
+                OnPropertyChanged(nameof(StatisticVisibility));
+            }
+        }
+
+        #region ICommandProperties
+        // File menu commands
+        public ICommand OpenDatabaseCommand { get; }
+        public ICommand NewDatabaseCommand { get; }
+        public ICommand ArchiveDatabaseCommand { get; }
+        public ICommand ExitCommand { get; }
+
         // To Do List menu commands
         public ICommand AddRootTDLCommand { get; }
         public ICommand AddSubTDLCommand { get; }
@@ -24,6 +41,7 @@ namespace ToDoApp.ViewModels
         public ICommand DeleteTDLCommand { get; }
         public ICommand MoveUpTDLCommand { get; }
         public ICommand MoveDownTDLCommand { get; }
+        public ICommand ChangePathCommand { get; }
 
         // Task menu commands
         public ICommand AddTaskCommand { get; }
@@ -33,12 +51,30 @@ namespace ToDoApp.ViewModels
         public ICommand MoveUpTaskCommand { get; }
         public ICommand MoveDownTaskCommand { get; }
         public ICommand ManageCategoriesCommand { get; }
+        public ICommand FindTaskCommand { get; }
+
+        // View menu commands
+        public ICommand SortByPriorityCommand { get; }
+        public ICommand SortByDeadlineCommand { get; }
+        public ICommand FilterByCategoryCommand { get; }
+        public ICommand FilterCompletedCommand { get; }
+        public ICommand FilterCompletedLateCommand { get; }
+        public ICommand FilterOverdueCommand { get; }
+        public ICommand FilterUncompletedWithFutureDeadlineCommand { get; }
+        public ICommand StatisticsCommand { get; }
+
+        // Help menu commands
+        public ICommand AboutCommand { get; }
 
         #endregion
 
         public MainViewModel()
         {
             InitializeContext();
+
+            #region ICommandPropertyInitializations
+            // File menu commands
+            ExitCommand = new RelayCommand(Exit);
             
             // To Do List menu commands
             AddRootTDLCommand = new RelayCommand(Context.AddRootToDoList);
@@ -56,12 +92,44 @@ namespace ToDoApp.ViewModels
             MoveUpTaskCommand = new RelayCommand(Context.MoveUpSelectedTask, parameter => Context.SelectedTask != null);
             MoveDownTaskCommand = new RelayCommand(Context.MoveDownSelectedTask, parameter => Context.SelectedTask != null);
             ManageCategoriesCommand = new RelayCommand(Context.ShowManageCategoriesView);
+            FindTaskCommand = new RelayCommand(Context.ShowFindTaskView);
+
+            // View menu commands
+            SortByPriorityCommand = new RelayCommand(Context.SortByPriority);
+            SortByDeadlineCommand = new RelayCommand(Context.SortByDeadline);
+            FilterByCategoryCommand = new RelayCommand(Context.FilterByCategory);
+            FilterCompletedCommand = new RelayCommand(Context.FilterCompleted);
+            FilterCompletedLateCommand = new RelayCommand(Context.FilterCompletedLate);
+            FilterOverdueCommand = new RelayCommand(Context.FilterOverdue);
+            FilterUncompletedWithFutureDeadlineCommand = new RelayCommand(Context.FilterUncompletedWithFutureDeadline);
+            StatisticsCommand = new RelayCommand(ModifyStatisticsVisibility);
+
+            // Help menu commands
+            AboutCommand = new RelayCommand(ShowAbout);
+
+            #endregion
         }
 
         private void InitializeContext()
         {
             // to be changed
             Context = new ViewModelContext(SerializationService.Deserialize<Database>("Test.xml"));
+        }
+
+        // command actions
+        private void Exit()
+        {
+            Application.Current.Shutdown();
+        }
+
+        private void ModifyStatisticsVisibility()
+        {
+            StatisticVisibility = StatisticVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private void ShowAbout()
+        {
+            _ = MessageBox.Show("Pușcaș Viorica" + Environment.NewLine + "10LF313" + Environment.NewLine + "viorica.puscas@student.unitbv.ro", "About", MessageBoxButton.OK);
         }
 
         // for event handling

@@ -1,4 +1,4 @@
-﻿<Window x:Class="ToDoApp.Views.ManageCategoriesView"
+﻿<Window x:Class="ToDoApp.Views.SelectCategoryView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -13,19 +13,15 @@
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        
-        <Label Grid.Row="0" Content="Manage Categories" FontSize="18"/>
 
-        <DataGrid Grid.Row="1" ItemsSource="{Binding Categories, Mode=TwoWay}" 
-                      CommandManager.PreviewExecuted="CategoriesDataGrid_PreviewDeleteCommandHandler"
-                      AutoGenerateColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" CanUserResizeRows="False"
-                      CellEditEnding="CategoriesDataGrid_CellEditEnding">
+        <Label Grid.Row="0" Content="Select Category" FontSize="18"/>
+
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Categories}" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" CanUserResizeRows="False" SelectionChanged="CategoriesDataGrid_SelectionChanged">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Category Name" Binding="{Binding Name}" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>
 
-        <Button Grid.Row="2" Content="Save Changes" Padding="5" Margin="10" HorizontalAlignment="Center"
-                Command="{Binding SaveChangesCommand}"/>
+        <Button Grid.Row="2" Content="Select Category" Padding="5" Margin="10" HorizontalAlignment="Center" Command="{Binding SelectCategoryCommand}"/>
     </Grid>
 </Window>

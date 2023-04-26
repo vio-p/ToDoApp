@@ -120,13 +120,5 @@ namespace ToDoApp.Models
                 collection.Move(index, index + 1);
             }
         }
-
-        public void UpdateToDoList(ToDoList toDoList)
-        {
-            ObservableCollection<ToDoList> collection = FindParentCollection(RootToDoLists, toDoList);
-            int index = collection.IndexOf(toDoList);
-            _ = collection.Remove(toDoList);
-            collection.Insert(index, toDoList);
-        }
     }
 }

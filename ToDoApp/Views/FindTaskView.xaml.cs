@@ -16,13 +16,13 @@ using ToDoApp.ViewModels;
 namespace ToDoApp.Views
 {
     /// <summary>
-    /// Interaction logic for AddToDoListView.xaml
+    /// Interaction logic for FindTaskView.xaml
     /// </summary>
-    public partial class ToDoListView : Window
+    public partial class FindTaskView : Window
     {
-        public ToDoListView(ViewModelContext context)
+        public FindTaskView(ViewModelContext context)
         {
-            DataContext = new ToDoListViewModel(context);
+            DataContext = new FindTaskViewModel(context);
             InitializeComponent();
         }
     }

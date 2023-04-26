@@ -20,39 +20,47 @@ namespace ToDoApp.ViewModels
         public List<string> IconPaths { get; set; }
         public bool CanExecuteAction { get; set; } = false;
 
-        private readonly ToDoList _newToDoList = new ToDoList();
+        private int _selectedIconIndex;
+        public int SelectedIconIndex
+        {
+            get => _selectedIconIndex;
+            set
+            {
+                _selectedIconIndex = value;
+                _newToDoList.IconPath = IconPaths[SelectedIconIndex];
+                OnPropertyChanged(nameof(SelectedIconIndex));
+            }
+        }
+        
+
+        private ToDoList _newToDoList = new ToDoList();
         public string Name
         {
             get => _newToDoList.Name;
             set
             {
                 _newToDoList.Name = value;
-                CanExecuteAction = _newToDoList.Name != "" && _newToDoList.Name != null && _newToDoList.IconPath != null;
+                CanExecuteAction = _newToDoList.Name != "" && _newToDoList.Name != null;
                 OnPropertyChanged(nameof(Name));
             }
         }
 
-        public string IconPath
+        public string ParentName
         {
-            get => _newToDoList.IconPath;
-            set
-            {
-                _newToDoList.IconPath = value;
-                CanExecuteAction = _newToDoList.Name != "" && _newToDoList.Name != null && _newToDoList.IconPath != null;
-            }
+            get => _newToDoList.ParentName;
+            set => _newToDoList.ParentName = value;
         }
-
-        public string ParentName { get; }
 
         public ICommand ActionButtonCommand { get; }
 
         public ToDoListViewModel(ViewModelContext context)
         {
             Context = context;
-            IconPaths = new List<string>(Directory.GetFiles(Environment.CurrentDirectory + @"..\..\..\Resources\Icons", "*.png", SearchOption.TopDirectoryOnly));
+            IconPaths = new List<string>(Directory.GetFiles(Environment.CurrentDirectory + @"..\..\..\Resources\ToDoListIcons", "*.png", SearchOption.TopDirectoryOnly));
 
             if (Context.ActionType == EActionType.Add)
             {
+                SelectedIconIndex = 0;
                 if (Context.SelectedToDoList == null) // adding root to do list
                 {
                     ActionButtonCommand = new RelayCommand(AddRootToDoList, parameter => CanExecuteAction);
@@ -71,7 +79,7 @@ namespace ToDoApp.ViewModels
                 ActionButtonCommand = new RelayCommand(EditToDoList, parameter => CanExecuteAction);
 
                 Name = Context.SelectedToDoList.Name;
-                IconPath = Context.SelectedToDoList.IconPath;
+                SelectedIconIndex = IconPaths.IndexOf(Context.SelectedToDoList.IconPath);
                 ParentName = Context.SelectedToDoList.ParentName;
             }
         }
@@ -79,24 +87,26 @@ namespace ToDoApp.ViewModels
         // command actions
         private void AddRootToDoList()
         {
-            _newToDoList.ParentName = ParentName;
             Context.Database.RootToDoLists.Add(_newToDoList);
             Context.SaveDatabase();
             _ = MessageBox.Show("The to do list has been added!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            _newToDoList = new ToDoList();
+            SelectedIconIndex = 0;
         }
 
         private void AddSubToDoList()
         {
-            _newToDoList.ParentName = ParentName;
             Context.SelectedToDoList.ToDoLists.Add(_newToDoList);
             Context.SaveDatabase();
             _ = MessageBox.Show("The to do list has been added!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            _newToDoList = new ToDoList();
+            SelectedIconIndex = 0;
         }
 
         private void EditToDoList()
         {
             Context.SelectedToDoList.Name = Name;
-            Context.SelectedToDoList.IconPath = IconPath;
+            Context.SelectedToDoList.IconPath = _newToDoList.IconPath;
 
             // change parent name for all sub-tdl's of edited tdl
             foreach (ToDoList tdl in Context.SelectedToDoList.ToDoLists)
@@ -104,19 +114,9 @@ namespace ToDoApp.ViewModels
                 tdl.ParentName = Context.SelectedToDoList.Name;
             }
 
-            Context.Database.UpdateToDoList(Context.SelectedToDoList);
             Context.SaveDatabase();
 
             _ = MessageBox.Show("The to do list has been edited!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-
-            Context.SelectedToDoList = null;
-            Context.OpenWindow.Close();
-        }
-
-        // for event handling
-        public void IconListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            IconPath = (sender as ListBox).SelectedItem as string;
         }
     }
 }

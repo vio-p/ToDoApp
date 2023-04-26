@@ -17,7 +17,7 @@
                 <MenuItem Header="Open Database"/>
                 <MenuItem Header="New Database"/>
                 <MenuItem Header="Archive Database"/>
-                <MenuItem Header="Exit"/>
+                <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
             </MenuItem>
             <MenuItem Header="To Do List">
                 <MenuItem Header="Add Root TDL" Command="{Binding AddRootTDLCommand}"/>
@@ -36,15 +36,24 @@
                 <MenuItem Header="Move Up" Command="{Binding MoveUpTaskCommand}"/>
                 <MenuItem Header="Move Down" Command="{Binding MoveDownTaskCommand}"/>
                 <MenuItem Header="Manage Categories" Command="{Binding ManageCategoriesCommand}"/>
-                <MenuItem Header="Find Task"/>
+                <MenuItem Header="Find Task" Command="{Binding FindTaskCommand}"/>
             </MenuItem>
             <MenuItem Header="View">
-                <MenuItem Header="Sort"/>
-                <MenuItem Header="Filter"/>
-                <MenuItem Header="Statistics"/>
+                <MenuItem Header="Sort">
+                    <MenuItem Header="By priority" Command="{Binding SortByPriorityCommand}"/>
+                    <MenuItem Header="By deadline" Command="{Binding SortByDeadlineCommand}"/>
+                </MenuItem>
+                <MenuItem Header="Filter">
+                    <MenuItem Header="By category" Command="{Binding FilterByCategoryCommand}"/>
+                    <MenuItem Header="Completed" Command="{Binding FilterCompletedCommand}"/>
+                    <MenuItem Header="Completed late" Command="{Binding FilterCompletedLateCommand}"/>
+                    <MenuItem Header="Overdue" Command="{Binding FilterOverdueCommand}"/>
+                    <MenuItem Header="Uncompleted with future deadline" Command="{Binding FilterUncompletedWithFutureDeadlineCommand}"/>
+                </MenuItem>
+                <MenuItem Header="Statistics" Command="{Binding StatisticsCommand}" IsCheckable="True" IsChecked="True"/>
             </MenuItem>
             <MenuItem Header="Help">
-                <MenuItem Header="About"/>
+                <MenuItem Header="About" Command="{Binding AboutCommand}"/>
             </MenuItem>
         </Menu>
 
@@ -73,7 +82,7 @@
                     </TreeView>
                 </Grid>
                 
-                <StackPanel Grid.Row="1" Margin="5" Background="WhiteSmoke">
+                <StackPanel Grid.Row="1" Margin="5" Background="WhiteSmoke" Visibility="{Binding StatisticVisibility}">
                     <Label Content="Tasks due today: "/>
                     <Label Content="Tasks due tomorrow: "/>
                     <Label Content="Tasks overdue: "/>
@@ -93,7 +102,7 @@
 
                 <Label Grid.Row="0" Content="Viewing selected to do list."/>
 
-                <DataGrid Grid.Row="1" ItemsSource="{Binding Context.SelectedToDoList.Tasks, Mode=TwoWay}" SelectionChanged="TasksDataGrid_SelectionChanged" IsReadOnly="True" AutoGenerateColumns="False" CanUserResizeRows="False" CanUserResizeColumns="False">
+                <DataGrid Grid.Row="1" ItemsSource="{Binding Context.DisplayedTasks, Mode=TwoWay}" SelectionChanged="TasksDataGrid_SelectionChanged" IsReadOnly="True" AutoGenerateColumns="False" CanUserResizeRows="False" CanUserResizeColumns="False">
                     <DataGrid.Columns>
                         <DataGridCheckBoxColumn Binding="{Binding IsCompleted}" Width="Auto"/>
                         <DataGridTextColumn Header="Task Name" Binding="{Binding Name}" Width="3*"/>

@@ -27,7 +27,7 @@
         </StackPanel>
 
         <Label Grid.Row="2"  Content="Icon:"/>
-        <ListBox Grid.Row="3" ItemsSource="{Binding IconPaths}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectionChanged="IconListBox_SelectionChanged">
+        <ListBox Grid.Row="3" ItemsSource="{Binding IconPaths}" SelectedIndex="{Binding SelectedIconIndex}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <UniformGrid Rows="1"/>

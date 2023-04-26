@@ -9,12 +9,32 @@ using System.Xml.Serialization;
 namespace ToDoApp.Models
 {
     [Serializable]
-    public class ToDoList
+    public class ToDoList : ModelBase
     {
+        private string _name;
         [XmlAttribute]
-        public string Name { get; set; }
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                _name = value;
+                OnPropertyChanged(nameof(Name));
+            }
+        }
+
+        private string _iconPath;
         [XmlAttribute]
-        public string IconPath { get; set; }
+        public string IconPath
+        {
+            get => _iconPath;
+            set
+            {
+                _iconPath = value;
+                OnPropertyChanged(nameof(IconPath));
+            }
+        }
+
         [XmlAttribute]
         public string ParentName { get; set; }
         [XmlArray]
@@ -26,13 +46,6 @@ namespace ToDoApp.Models
         {
             ToDoLists = new ObservableCollection<ToDoList>();
             Tasks = new ObservableCollection<Task>();
-        }
-
-        public void UpdateTask(Task task)
-        {
-            int index = Tasks.IndexOf(task);
-            _ = Tasks.Remove(task);
-            Tasks.Insert(index, task);
         }
 
         public void MoveUpTask(Task task)

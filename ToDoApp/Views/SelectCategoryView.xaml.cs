@@ -16,14 +16,19 @@ using ToDoApp.ViewModels;
 namespace ToDoApp.Views
 {
     /// <summary>
-    /// Interaction logic for AddToDoListView.xaml
+    /// Interaction logic for SelectCategoryView.xaml
     /// </summary>
-    public partial class ToDoListView : Window
+    public partial class SelectCategoryView : Window
     {
-        public ToDoListView(ViewModelContext context)
+        public SelectCategoryView(ViewModelContext context)
         {
-            DataContext = new ToDoListViewModel(context);
+            DataContext = new SelectCategoryViewModel(context);
             InitializeComponent();
+        }
+
+        private void CategoriesDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            (DataContext as SelectCategoryViewModel).CategoriesDataGrid_SelectionChanged(sender, e);
         }
     }
 }

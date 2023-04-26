@@ -62,10 +62,6 @@ namespace ToDoApp.ViewModels
             set
             {
                 _newTask.Category = value;
-                if (_newTask.Category != null)
-                {
-                    _newTask.CategoryId = _newTask.Category.Id;
-                }
                 OnPropertyChanged(nameof(Category));
             }
         }
@@ -135,17 +131,15 @@ namespace ToDoApp.ViewModels
         {
             Context.SelectedTask.Name = Name;
             Context.SelectedTask.Priority = _newTask.Priority;
+            Context.SelectedTask.IsCompleted = IsCompleted;
             Context.SelectedTask.Status = _newTask.Status;
             Context.SelectedTask.Category = Category;
             Context.SelectedTask.Deadline = Deadline;
             Context.SelectedTask.Description = Description;
-            Context.SelectedTask.IsCompleted = IsCompleted;
-
-            Context.SelectedToDoList.UpdateTask(Context.SelectedTask);
+            
             Context.SaveDatabase();
 
             _ = MessageBox.Show("The task has been edited!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-            Context.OpenWindow.Close();
         }
     }
 }

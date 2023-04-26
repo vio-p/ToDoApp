@@ -70,12 +70,20 @@
     <Compile Include="Models\Task.cs" />
     <Compile Include="Models\ToDoList.cs" />
     <Compile Include="Services\SerializationService.cs" />
+    <Compile Include="ViewModels\FindTaskViewModel.cs" />
+    <Compile Include="ViewModels\SelectCategoryViewModel.cs" />
     <Compile Include="ViewModels\ViewModelContext.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\ManageCategoriesViewModel.cs" />
     <Compile Include="ViewModels\TaskViewModel.cs" />
     <Compile Include="ViewModels\ToDoListViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="Views\FindTaskView.xaml.cs">
+      <DependentUpon>FindTaskView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SelectCategoryView.xaml.cs">
+      <DependentUpon>SelectCategoryView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\TaskView.xaml.cs">
       <DependentUpon>TaskView.xaml</DependentUpon>
     </Compile>
@@ -116,14 +124,22 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Icons\book.png" />
-    <Resource Include="Resources\Icons\dumbell.png" />
-    <Resource Include="Resources\Icons\graduation-hat.png" />
-    <Resource Include="Resources\Icons\home.png" />
-    <Resource Include="Resources\Icons\plane.png" />
-    <Resource Include="Resources\Icons\plant.png" />
+    <Resource Include="Resources\ToDoListIcons\book.png" />
+    <Resource Include="Resources\ToDoListIcons\dumbell.png" />
+    <Resource Include="Resources\ToDoListIcons\graduation-hat.png" />
+    <Resource Include="Resources\ToDoListIcons\home.png" />
+    <Resource Include="Resources\ToDoListIcons\plane.png" />
+    <Resource Include="Resources\ToDoListIcons\plant.png" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Views\FindTaskView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SelectCategoryView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\TaskView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -140,6 +156,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\search-icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -12,9 +12,20 @@ namespace ToDoApp.ViewModels
 {
     public class ViewModelContext : ViewModelBase
     {
-        public Database Database { get; set; }
+        public Database Database { get; }
         public EActionType ActionType { get; set; }
         public Window OpenWindow { get; set; }
+
+        private ObservableCollection<Task> _displayedTasks;
+        public ObservableCollection<Task> DisplayedTasks
+        {
+            get => _displayedTasks;
+            set
+            {
+                _displayedTasks = value;
+                OnPropertyChanged(nameof(DisplayedTasks));
+            }
+        }
 
         private ToDoList _selectedToDoList;
         public ToDoList SelectedToDoList
@@ -23,6 +34,7 @@ namespace ToDoApp.ViewModels
             set
             {
                 _selectedToDoList = value;
+                DisplayedTasks = _selectedToDoList != null ? _selectedToDoList.Tasks : null;
                 OnPropertyChanged(nameof(SelectedToDoList));
             }
         }
@@ -37,6 +49,8 @@ namespace ToDoApp.ViewModels
                 OnPropertyChanged(nameof(SelectedTask));
             }
         }
+
+        public Category CategoryToFilterBy { get; set; }
 
         public ViewModelContext(Database database)
         {
@@ -68,7 +82,6 @@ namespace ToDoApp.ViewModels
         {
             ActionType = EActionType.Edit;
             ToDoListView toDoListView = new ToDoListView(this);
-            OpenWindow = toDoListView;
             toDoListView.Show();
         }
 
@@ -80,7 +93,6 @@ namespace ToDoApp.ViewModels
                 return;
             }
             Database.DeleteToDoList(SelectedToDoList);
-            SelectedToDoList = null;
             SaveDatabase();
         }
 
@@ -107,7 +119,6 @@ namespace ToDoApp.ViewModels
         {
             ActionType = EActionType.Edit;
             TaskView taskView = new TaskView(this);
-            OpenWindow = taskView;
             taskView.Show();
         }
 
@@ -119,14 +130,12 @@ namespace ToDoApp.ViewModels
                 return;
             }
             _ = SelectedToDoList.Tasks.Remove(SelectedTask);
-            SelectedTask = null;
             SaveDatabase();
         }
 
         public void SetDoneSelectedTask()
         {
             SelectedTask.IsCompleted = true;
-            SelectedToDoList.UpdateTask(SelectedTask);
             SaveDatabase();
         }
 
@@ -145,6 +154,53 @@ namespace ToDoApp.ViewModels
         {
             ManageCategoriesView manageCategoriesView = new ManageCategoriesView(this);
             manageCategoriesView.Show();
+        }
+
+        public void ShowFindTaskView()
+        {
+            FindTaskView findTaskView = new FindTaskView(this);
+            findTaskView.Show();
+        }
+
+        public void SortByPriority()
+        {
+            List<Task> tasks = SelectedToDoList.Tasks.ToList();
+            tasks.Sort(new Comparison<Task>((x, y) => x.Priority.CompareTo(y.Priority)));
+            DisplayedTasks = new ObservableCollection<Task>(tasks);
+        }
+
+        public void SortByDeadline()
+        {
+            List<Task> tasks = SelectedToDoList.Tasks.ToList();
+            tasks.Sort(new Comparison<Task>((x, y) => x.Deadline.CompareTo(y.Deadline)));
+            DisplayedTasks = new ObservableCollection<Task>(tasks);
+        }
+
+        public void FilterByCategory()
+        {
+            SelectCategoryView selectCategoryView = new SelectCategoryView(this);
+            OpenWindow = selectCategoryView;
+            selectCategoryView.Show();
+        }
+
+        public void FilterCompleted()
+        {
+            DisplayedTasks = new ObservableCollection<Task>(SelectedToDoList.Tasks.Where(task => task.IsCompleted));
+        }
+
+        public void FilterCompletedLate()
+        {
+            DisplayedTasks = new ObservableCollection<Task>(SelectedToDoList.Tasks.Where(task => task.IsCompletedLate()));
+        }
+
+        public void FilterOverdue()
+        {
+            DisplayedTasks = new ObservableCollection<Task>(SelectedToDoList.Tasks.Where(task => task.IsOverdue()));
+        }
+
+        public void FilterUncompletedWithFutureDeadline()
+        {
+            DisplayedTasks = new ObservableCollection<Task>(SelectedToDoList.Tasks.Where(task => task.IsUncompletedWithFutureDeadline()));
         }
     }
 }

@@ -43,7 +43,6 @@ namespace ToDoApp.ViewModels
                 }
             }
             Context.SaveDatabase();
-            //Context.SelectedToDoList = Context.SelectedToDoList;
             _ = MessageBox.Show("Your changes have been saved!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
