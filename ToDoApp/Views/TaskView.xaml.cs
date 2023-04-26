@@ -16,19 +16,14 @@ using ToDoApp.ViewModels;
 namespace ToDoApp.Views
 {
     /// <summary>
-    /// Interaction logic for AddToDoListView.xaml
+    /// Interaction logic for TaskView.xaml
     /// </summary>
-    public partial class ToDoListView : Window
+    public partial class TaskView : Window
     {
-        public ToDoListView(ViewModelContext context)
+        public TaskView(ViewModelContext context)
         {
-            DataContext = new ToDoListViewModel(context);
+            DataContext = new TaskViewModel(context);
             InitializeComponent();
-        }
-
-        private void IconListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            (DataContext as ToDoListViewModel).IconListBox_SelectionChanged(sender, e);
         }
     }
 }

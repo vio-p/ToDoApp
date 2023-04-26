@@ -3,107 +3,77 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using ToDoApp.Commands;
 using ToDoApp.Models;
 using ToDoApp.Services;
-using ToDoApp.Views;
 
 namespace ToDoApp.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        public Context Context { get; set; }
+        public ViewModelContext Context { get; set; }
 
-        // commands
+        #region Commands
+        // To Do List menu commands
         public ICommand AddRootTDLCommand { get; }
         public ICommand AddSubTDLCommand { get; }
         public ICommand EditTDLCommand { get; }
         public ICommand DeleteTDLCommand { get; }
         public ICommand MoveUpTDLCommand { get; }
         public ICommand MoveDownTDLCommand { get; }
+
+        // Task menu commands
+        public ICommand AddTaskCommand { get; }
+        public ICommand EditTaskCommand { get; }
+        public ICommand DeleteTaskCommand { get; }
+        public ICommand SetDoneTaskCommand { get; }
+        public ICommand MoveUpTaskCommand { get; }
+        public ICommand MoveDownTaskCommand { get; }
         public ICommand ManageCategoriesCommand { get; }
+
+        #endregion
 
         public MainViewModel()
         {
             InitializeContext();
             
             // To Do List menu commands
-            AddRootTDLCommand = new RelayCommand(ShowToDoListViewToAddRootTDL);
-            AddSubTDLCommand = new RelayCommand(ShowToDoListViewToAddSubTDL, parameter => Context.IsSelectedToDoList);
-            EditTDLCommand = new RelayCommand(ShowToDoListViewToEditTDL, parameter => Context.IsSelectedToDoList);
-            DeleteTDLCommand = new RelayCommand(DeleteToDoList, parameter => Context.IsSelectedToDoList);
-            MoveUpTDLCommand = new RelayCommand(MoveUpToDoList, parameter => Context.IsSelectedToDoList);
-            MoveDownTDLCommand = new RelayCommand(MoveDownToList, parameter => Context.IsSelectedToDoList);
+            AddRootTDLCommand = new RelayCommand(Context.AddRootToDoList);
+            AddSubTDLCommand = new RelayCommand(Context.AddSubToDoList, parameter => Context.SelectedToDoList != null);
+            EditTDLCommand = new RelayCommand(Context.EditSelectedToDoList, parameter => Context.SelectedToDoList != null);
+            DeleteTDLCommand = new RelayCommand(Context.DeleteSelectedToDoList, parameter => Context.SelectedToDoList != null);
+            MoveUpTDLCommand = new RelayCommand(Context.MoveUpSelectedToDoList, parameter => Context.SelectedToDoList != null);
+            MoveDownTDLCommand = new RelayCommand(Context.MoveDownSelectedToDoList, parameter => Context.SelectedToDoList != null);
 
             // Task menu commands
-            ManageCategoriesCommand = new RelayCommand(ShowManageCategoriesView);
+            AddTaskCommand = new RelayCommand(Context.AddTask, parameter => Context.SelectedToDoList != null);
+            EditTaskCommand = new RelayCommand(Context.EditSelectedTask, parameter => Context.SelectedTask != null);
+            DeleteTaskCommand = new RelayCommand(Context.DeleteSelectedTask, parameter => Context.SelectedTask != null);
+            SetDoneTaskCommand = new RelayCommand(Context.SetDoneSelectedTask, parameter => Context.SelectedTask != null && !Context.SelectedTask.IsCompleted);
+            MoveUpTaskCommand = new RelayCommand(Context.MoveUpSelectedTask, parameter => Context.SelectedTask != null);
+            MoveDownTaskCommand = new RelayCommand(Context.MoveDownSelectedTask, parameter => Context.SelectedTask != null);
+            ManageCategoriesCommand = new RelayCommand(Context.ShowManageCategoriesView);
         }
 
         private void InitializeContext()
         {
             // to be changed
-            Context = new Context(SerializationActions.Deserialize<Database>("Test.xml"));
-        }
-
-        // command actions
-        private void ShowManageCategoriesView()
-        {
-            ManageCategoriesView manageCategoriesView = new ManageCategoriesView(Context);
-            manageCategoriesView.Show();
-        }
-
-        private void ShowToDoListViewToAddRootTDL()
-        {
-            Context.ActionType = EActionType.Add;
-            Context.SelectedToDoList = new ToDoList();
-            ToDoListView toDoListView = new ToDoListView(Context);
-            toDoListView.Show();
-        }
-
-        private void ShowToDoListViewToAddSubTDL()
-        {
-            Context.ActionType = EActionType.Add;
-            ToDoListView toDoListView = new ToDoListView(Context);
-            toDoListView.Show();
-        }
-
-        private void ShowToDoListViewToEditTDL()
-        {
-            Context.ActionType = EActionType.Edit;
-            ToDoListView toDoListView = new ToDoListView(Context);
-            toDoListView.Show();
-        }
-
-        private void DeleteToDoList()
-        {
-            if (!(MessageBox.Show("Are you sure you want to delete the to do list?", "Please confirm.", MessageBoxButton.YesNo) == MessageBoxResult.Yes))
-            {
-                // cancel delete
-                return;
-            }
-            Context.Database.DeleteToDoList(Context.SelectedToDoList);
-            SerializationActions.Serialize(Context.Database, Context.Database.Name + ".xml");
-        }
-
-        private void MoveUpToDoList()
-        {
-            Context.Database.MoveUpToDoList(Context.SelectedToDoList);
-            SerializationActions.Serialize(Context.Database, Context.Database.Name + ".xml");
-        }
-
-        private void MoveDownToList()
-        {
-            Context.Database.MoveDownToDoList(Context.SelectedToDoList);
-            SerializationActions.Serialize(Context.Database, Context.Database.Name + ".xml");
+            Context = new ViewModelContext(SerializationService.Deserialize<Database>("Test.xml"));
         }
 
         // for event handling
         public void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             Context.SelectedToDoList = e.NewValue as ToDoList;
+            Context.SelectedTask = null;
+        }
+
+        public void TasksDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Context.SelectedTask = (sender as DataGrid).SelectedItem as Task;
         }
     }
 }

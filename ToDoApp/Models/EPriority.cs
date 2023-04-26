@@ -9,8 +9,9 @@ namespace ToDoApp.Models
     [Serializable]
     public enum EPriority
     {
-        High,
+        None,
+        Low,
         Medium,
-        Low
+        High
     }
 }

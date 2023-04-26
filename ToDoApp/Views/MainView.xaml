@@ -29,12 +29,12 @@
                 <MenuItem Header="Change Path"/>
             </MenuItem>
             <MenuItem Header="Task">
-                <MenuItem Header="Add"/>
-                <MenuItem Header="Edit"/>
-                <MenuItem Header="Delete"/>
-                <MenuItem Header="Set Done"/>
-                <MenuItem Header="Move Up"/>
-                <MenuItem Header="Move Down"/>
+                <MenuItem Header="Add" Command="{Binding AddTaskCommand}"/>
+                <MenuItem Header="Edit" Command="{Binding EditTaskCommand}"/>
+                <MenuItem Header="Delete" Command="{Binding DeleteTaskCommand}"/>
+                <MenuItem Header="Set Done" Command="{Binding SetDoneTaskCommand}"/>
+                <MenuItem Header="Move Up" Command="{Binding MoveUpTaskCommand}"/>
+                <MenuItem Header="Move Down" Command="{Binding MoveDownTaskCommand}"/>
                 <MenuItem Header="Manage Categories" Command="{Binding ManageCategoriesCommand}"/>
                 <MenuItem Header="Find Task"/>
             </MenuItem>
@@ -91,14 +91,21 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
 
-                <Label Grid.Row="0" Content="Viewing NAME to do list."/>
+                <Label Grid.Row="0" Content="Viewing selected to do list."/>
 
-                <ListView Grid.Row="1">
+                <DataGrid Grid.Row="1" ItemsSource="{Binding Context.SelectedToDoList.Tasks, Mode=TwoWay}" SelectionChanged="TasksDataGrid_SelectionChanged" IsReadOnly="True" AutoGenerateColumns="False" CanUserResizeRows="False" CanUserResizeColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridCheckBoxColumn Binding="{Binding IsCompleted}" Width="Auto"/>
+                        <DataGridTextColumn Header="Task Name" Binding="{Binding Name}" Width="3*"/>
+                        <DataGridTextColumn Header="Priority" Binding="{Binding Priority}" Width="*"/>
+                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*"/>
+                        <DataGridTextColumn Header="Category" Binding="{Binding Category.Name}" Width="*"/>
+                        <DataGridTextColumn Header="Deadline" Binding="{Binding Deadline, StringFormat=\{0:dd.MM.yyyy\}}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
 
-                </ListView>
-                
                 <Label Grid.Row="2" Content="Notes"/>
-                <TextBox Grid.Row="3"/>
+                <TextBox Grid.Row="3" IsReadOnly="True" Text="{Binding Context.SelectedTask.Description}"/>
             </Grid>
         </Grid>
     </DockPanel>

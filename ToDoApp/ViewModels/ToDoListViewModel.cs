@@ -16,18 +16,18 @@ namespace ToDoApp.ViewModels
 {
     public class ToDoListViewModel : ViewModelBase
     {
-        public Context Context { get; set; }
+        public ViewModelContext Context { get; set; }
         public List<string> IconPaths { get; set; }
         public bool CanExecuteAction { get; set; } = false;
 
-        private readonly ToDoList _newToDoList;
+        private readonly ToDoList _newToDoList = new ToDoList();
         public string Name
         {
             get => _newToDoList.Name;
             set
             {
                 _newToDoList.Name = value;
-                CanExecuteAction = _newToDoList.Name != "" && _newToDoList.IconPath != null;
+                CanExecuteAction = _newToDoList.Name != "" && _newToDoList.Name != null && _newToDoList.IconPath != null;
                 OnPropertyChanged(nameof(Name));
             }
         }
@@ -38,7 +38,7 @@ namespace ToDoApp.ViewModels
             set
             {
                 _newToDoList.IconPath = value;
-                CanExecuteAction = _newToDoList.Name != "" && _newToDoList.IconPath != null;
+                CanExecuteAction = _newToDoList.Name != "" && _newToDoList.Name != null && _newToDoList.IconPath != null;
             }
         }
 
@@ -46,26 +46,27 @@ namespace ToDoApp.ViewModels
 
         public ICommand ActionButtonCommand { get; }
 
-        public ToDoListViewModel(Context context)
+        public ToDoListViewModel(ViewModelContext context)
         {
             Context = context;
             IconPaths = new List<string>(Directory.GetFiles(Environment.CurrentDirectory + @"..\..\..\Resources\Icons", "*.png", SearchOption.TopDirectoryOnly));
-            _newToDoList = new ToDoList();
 
             if (Context.ActionType == EActionType.Add)
             {
-                if (Context.SelectedToDoList.Name == null) // adding root to do list
+                if (Context.SelectedToDoList == null) // adding root to do list
                 {
                     ActionButtonCommand = new RelayCommand(AddRootToDoList, parameter => CanExecuteAction);
+
                     ParentName = "";
                 }
                 else // adding sub to do list
                 {
                     ActionButtonCommand = new RelayCommand(AddSubToDoList, parameter => CanExecuteAction);
+
                     ParentName = Context.SelectedToDoList.Name;
                 }
             }
-            if (Context.ActionType == EActionType.Edit)
+            else if (Context.ActionType == EActionType.Edit)
             {
                 ActionButtonCommand = new RelayCommand(EditToDoList, parameter => CanExecuteAction);
 
@@ -80,7 +81,7 @@ namespace ToDoApp.ViewModels
         {
             _newToDoList.ParentName = ParentName;
             Context.Database.RootToDoLists.Add(_newToDoList);
-            SerializationActions.Serialize(Context.Database, Context.Database.Name + ".xml");
+            Context.SaveDatabase();
             _ = MessageBox.Show("The to do list has been added!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
@@ -88,14 +89,14 @@ namespace ToDoApp.ViewModels
         {
             _newToDoList.ParentName = ParentName;
             Context.SelectedToDoList.ToDoLists.Add(_newToDoList);
-            SerializationActions.Serialize(Context.Database, Context.Database.Name + ".xml");
+            Context.SaveDatabase();
             _ = MessageBox.Show("The to do list has been added!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void EditToDoList()
         {
-            Context.SelectedToDoList.Name = _newToDoList.Name;
-            Context.SelectedToDoList.IconPath = _newToDoList.IconPath;
+            Context.SelectedToDoList.Name = Name;
+            Context.SelectedToDoList.IconPath = IconPath;
 
             // change parent name for all sub-tdl's of edited tdl
             foreach (ToDoList tdl in Context.SelectedToDoList.ToDoLists)
@@ -104,9 +105,12 @@ namespace ToDoApp.ViewModels
             }
 
             Context.Database.UpdateToDoList(Context.SelectedToDoList);
-            SerializationActions.Serialize(Context.Database, Context.Database.Name + ".xml");
+            Context.SaveDatabase();
 
             _ = MessageBox.Show("The to do list has been edited!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            Context.SelectedToDoList = null;
+            Context.OpenWindow.Close();
         }
 
         // for event handling

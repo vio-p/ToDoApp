@@ -66,14 +66,19 @@
     <Compile Include="Models\EActionType.cs" />
     <Compile Include="Models\EPriority.cs" />
     <Compile Include="Models\EStatus.cs" />
+    <Compile Include="Models\ModelBase.cs" />
     <Compile Include="Models\Task.cs" />
     <Compile Include="Models\ToDoList.cs" />
-    <Compile Include="Services\SerializationActions.cs" />
-    <Compile Include="ViewModels\Context.cs" />
+    <Compile Include="Services\SerializationService.cs" />
+    <Compile Include="ViewModels\ViewModelContext.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\ManageCategoriesViewModel.cs" />
+    <Compile Include="ViewModels\TaskViewModel.cs" />
     <Compile Include="ViewModels\ToDoListViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="Views\TaskView.xaml.cs">
+      <DependentUpon>TaskView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ToDoListView.xaml.cs">
       <DependentUpon>ToDoListView.xaml</DependentUpon>
     </Compile>
@@ -119,6 +124,10 @@
     <Resource Include="Resources\Icons\plant.png" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Views\TaskView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ToDoListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -27,5 +27,30 @@ namespace ToDoApp.Models
             ToDoLists = new ObservableCollection<ToDoList>();
             Tasks = new ObservableCollection<Task>();
         }
+
+        public void UpdateTask(Task task)
+        {
+            int index = Tasks.IndexOf(task);
+            _ = Tasks.Remove(task);
+            Tasks.Insert(index, task);
+        }
+
+        public void MoveUpTask(Task task)
+        {
+            int index = Tasks.IndexOf(task);
+            if (index > 0)
+            {
+                Tasks.Move(index, index - 1);
+            }
+        }
+
+        public void MoveDownTask(Task task)
+        {
+            int index = Tasks.IndexOf(task);
+            if (index < Tasks.Count - 1)
+            {
+                Tasks.Move(index, index + 1);
+            }
+        }
     }
 }

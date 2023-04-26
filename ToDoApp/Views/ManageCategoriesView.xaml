@@ -16,7 +16,7 @@
         
         <Label Grid.Row="0" Content="Manage Categories" FontSize="18"/>
 
-        <DataGrid Grid.Row="1" ItemsSource="{Binding Categories,Mode=TwoWay}" 
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Categories, Mode=TwoWay}" 
                       CommandManager.PreviewExecuted="CategoriesDataGrid_PreviewDeleteCommandHandler"
                       AutoGenerateColumns="False" CanUserAddRows="True" CanUserDeleteRows="True" CanUserResizeRows="False"
                       CellEditEnding="CategoriesDataGrid_CellEditEnding">

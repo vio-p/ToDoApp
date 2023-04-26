@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 namespace ToDoApp.Models
 {
     [Serializable]
-    public class Task
+    public class Task : ModelBase
     {
         [XmlAttribute]
         public string Name { get; set; }
@@ -21,27 +21,37 @@ namespace ToDoApp.Models
         [XmlElement]
         public EPriority Priority { get; set; }
         [XmlAttribute]
-        public DateTime Deadline { get; set; }
+        public DateTime Deadline { get; set; } = DateTime.Now;
         [XmlAttribute]
         public DateTime DateFinished { get; set; }
         [XmlAttribute]
-        bool IsFinished { get; set; }
+        private bool _isCompleted;
+        public bool IsCompleted
+        {
+            get => _isCompleted;
+            set
+            {
+                _isCompleted = value;
+                DateFinished = _isCompleted ? DateTime.Now : default;
+                Status = _isCompleted ? EStatus.Done : EStatus.InProgress;
+            }
+        }
+
+        private Category _category;
+        [XmlIgnore]
+        public Category Category
+        {
+            get => _category;
+            set
+            {
+                _category = value;
+                OnPropertyChanged(nameof(Category));
+            }
+        }
 
         public Task()
         {
             // empty
-        }
-
-        public Task(string name, string description, int categoryId, EStatus status, EPriority priority, DateTime deadline, DateTime dateFinished)
-        {
-            Name = name;
-            Description = description;
-            CategoryId = categoryId;
-            Status = status;
-            Priority = priority;
-            Deadline = deadline;
-            DateFinished = dateFinished;
-            IsFinished = false;
         }
     }
 }

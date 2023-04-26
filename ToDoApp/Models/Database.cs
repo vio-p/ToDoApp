@@ -20,6 +20,8 @@ namespace ToDoApp.Models
         [XmlArray]
         public ObservableCollection<Category> Categories { get; set; }
 
+        private List<Task> _allTasks;
+
         public Database()
         {
             // empty
@@ -31,6 +33,50 @@ namespace ToDoApp.Models
             DateCreated = DateTime.Now;
             RootToDoLists = new ObservableCollection<ToDoList>();
             Categories = new ObservableCollection<Category>();
+        }
+
+        private void AddTasks(ObservableCollection<ToDoList> collection)
+        {
+            if (collection.Count == 0)
+            {
+                return;
+            }
+            foreach (ToDoList toDoList in collection)
+            {
+                _allTasks.AddRange(toDoList.Tasks);
+                AddTasks(toDoList.ToDoLists);
+            }
+        }
+
+        public List<Task> GetAllTasks()
+        {
+            _allTasks = new List<Task>();
+            AddTasks(RootToDoLists);
+            return _allTasks;
+        }
+
+        private void SetTaskCategories(ObservableCollection<ToDoList> collection)
+        {
+            if (collection.Count == 0)
+            {
+                return;
+            }
+            foreach (ToDoList tdl in collection)
+            {
+                foreach (Task task in tdl.Tasks)
+                {
+                    if (task.CategoryId > 0)
+                    {
+                        task.Category = Categories.Single(category => category.Id == task.CategoryId);
+                    }
+                }
+                SetTaskCategories(tdl.ToDoLists);
+            }
+        }
+
+        public void Initialize()
+        {
+            SetTaskCategories(RootToDoLists);
         }
 
         private ObservableCollection<ToDoList> FindParentCollection(ObservableCollection<ToDoList> collection, ToDoList toDoList)

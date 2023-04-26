@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 
 namespace ToDoApp.Services
 {
-    public static class SerializationActions
+    public static class SerializationService
     {
         public static void Serialize<T>(T item, string filePath)
         {

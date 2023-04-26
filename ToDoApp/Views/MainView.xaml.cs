@@ -29,5 +29,10 @@ namespace ToDoApp.Views
         {
             (DataContext as MainViewModel).TreeView_SelectedItemChanged(sender, e);
         }
+
+        private void TasksDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            (DataContext as MainViewModel).TasksDataGrid_SelectionChanged(sender, e);
+        }
     }
 }
