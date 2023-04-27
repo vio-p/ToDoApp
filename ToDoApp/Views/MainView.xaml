@@ -14,9 +14,9 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top" FontSize="13">
             <MenuItem Header="File">
-                <MenuItem Header="Open Database"/>
-                <MenuItem Header="New Database"/>
-                <MenuItem Header="Archive Database"/>
+                <MenuItem Header="Open Database" Command="{Binding OpenDatabaseCommand}"/>
+                <MenuItem Header="New Database" Command="{Binding NewDatabaseCommand}"/>
+                <MenuItem Header="Archive Database" Command="{Binding ArchiveDatabaseCommand}"/>
                 <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
             </MenuItem>
             <MenuItem Header="To Do List">
@@ -26,7 +26,7 @@
                 <MenuItem Header="Delete" Command="{Binding DeleteTDLCommand}"/>
                 <MenuItem Header="Move Up" Command="{Binding MoveUpTDLCommand}"/>
                 <MenuItem Header="Move Down" Command="{Binding MoveDownTDLCommand}"/>
-                <MenuItem Header="Change Path"/>
+                <MenuItem Header="Change Path" Command="{Binding ChangePathCommand}"/>
             </MenuItem>
             <MenuItem Header="Task">
                 <MenuItem Header="Add" Command="{Binding AddTaskCommand}"/>
@@ -81,14 +81,14 @@
                         </TreeView.ItemTemplate>
                     </TreeView>
                 </Grid>
-                
+
                 <StackPanel Grid.Row="1" Margin="5" Background="WhiteSmoke" Visibility="{Binding StatisticVisibility}">
-                    <Label Content="Tasks due today: "/>
-                    <Label Content="Tasks due tomorrow: "/>
-                    <Label Content="Tasks overdue: "/>
+                    <Label Content="{Binding Context.LabelDueToday}"/>
+                    <Label Content="{Binding Context.LabelDueTomorrow}"/>
+                    <Label Content="{Binding Context.LabelOverdue}"/>
                     <Separator/>
-                    <Label Content="Tasks done: "/>
-                    <Label Content="Tasks to be done: "/>
+                    <Label Content="{Binding Context.LabelDone}"/>
+                    <Label Content="{Binding Context.LabelToBeDone}"/>
                 </StackPanel>
             </Grid>
 

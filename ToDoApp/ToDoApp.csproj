@@ -70,7 +70,10 @@
     <Compile Include="Models\Task.cs" />
     <Compile Include="Models\ToDoList.cs" />
     <Compile Include="Services\SerializationService.cs" />
+    <Compile Include="ViewModels\ChangePathViewModel.cs" />
+    <Compile Include="ViewModels\CreateDatabaseViewModel.cs" />
     <Compile Include="ViewModels\FindTaskViewModel.cs" />
+    <Compile Include="ViewModels\OpenDatabaseViewModel.cs" />
     <Compile Include="ViewModels\SelectCategoryViewModel.cs" />
     <Compile Include="ViewModels\ViewModelContext.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
@@ -78,8 +81,17 @@
     <Compile Include="ViewModels\TaskViewModel.cs" />
     <Compile Include="ViewModels\ToDoListViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="Views\ChangePathView.xaml.cs">
+      <DependentUpon>ChangePathView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CreateDatabaseView.xaml.cs">
+      <DependentUpon>CreateDatabaseView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\FindTaskView.xaml.cs">
       <DependentUpon>FindTaskView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\OpenDatabaseView.xaml.cs">
+      <DependentUpon>OpenDatabaseView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SelectCategoryView.xaml.cs">
       <DependentUpon>SelectCategoryView.xaml</DependentUpon>
@@ -114,6 +126,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -132,7 +145,19 @@
     <Resource Include="Resources\ToDoListIcons\plant.png" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Views\ChangePathView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CreateDatabaseView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\FindTaskView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\OpenDatabaseView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

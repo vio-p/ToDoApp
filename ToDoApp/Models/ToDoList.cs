@@ -65,5 +65,31 @@ namespace ToDoApp.Models
                 Tasks.Move(index, index + 1);
             }
         }
+
+        private bool FindChild(ToDoList parentToDoList, ToDoList childToDoList)
+        {
+            if (parentToDoList == childToDoList)
+            {
+                return true;
+            }
+            foreach (ToDoList tdl in parentToDoList.ToDoLists)
+            {
+                if (tdl == childToDoList)
+                {
+                    return true;
+                }
+                bool found = FindChild(tdl, childToDoList);
+                if (found)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool IsOrIsChildOf(ToDoList toDoList)
+        {
+            return FindChild(toDoList, this);
+        }
     }
 }

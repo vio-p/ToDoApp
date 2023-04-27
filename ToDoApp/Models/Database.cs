@@ -22,6 +22,9 @@ namespace ToDoApp.Models
 
         private List<Task> _allTasks;
 
+        [XmlAttribute]
+        public string Path { get; set; }
+
         public Database()
         {
             // empty
@@ -30,6 +33,7 @@ namespace ToDoApp.Models
         public Database(string name)
         {
             Name = name;
+            Path = @"Databases\" + Name + ".xml";
             DateCreated = DateTime.Now;
             RootToDoLists = new ObservableCollection<ToDoList>();
             Categories = new ObservableCollection<Category>();

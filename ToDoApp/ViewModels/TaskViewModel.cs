@@ -122,6 +122,26 @@ namespace ToDoApp.ViewModels
         // command actions
         private void AddTask()
         {
+            if (_newTask.IsDueToday())
+            {
+                Context.DueToday++;
+            }
+            if (_newTask.IsDueTomorrow())
+            {
+                Context.DueTomorrow++;
+            }
+            if (_newTask.IsOverdue())
+            {
+                Context.Overdue++;
+            }
+            if (_newTask.IsCompleted)
+            {
+                Context.Done++;
+            }
+            else
+            {
+                Context.ToBeDone++;
+            }
             Context.SelectedToDoList.Tasks.Add(_newTask);
             Context.SaveDatabase();
             _ = MessageBox.Show("The task has been added!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -129,6 +149,27 @@ namespace ToDoApp.ViewModels
 
         private void EditTask()
         {
+            if (Context.SelectedTask.IsDueToday())
+            {
+                Context.DueToday--;
+            }
+            if (Context.SelectedTask.IsDueTomorrow())
+            {
+                Context.DueTomorrow--;
+            }
+            if (Context.SelectedTask.IsOverdue())
+            {
+                Context.Overdue--;
+            }
+            if (Context.SelectedTask.IsCompleted)
+            {
+                Context.Done--;
+            }
+            else
+            {
+                Context.ToBeDone--;
+            }
+
             Context.SelectedTask.Name = Name;
             Context.SelectedTask.Priority = _newTask.Priority;
             Context.SelectedTask.IsCompleted = IsCompleted;
@@ -136,7 +177,28 @@ namespace ToDoApp.ViewModels
             Context.SelectedTask.Category = Category;
             Context.SelectedTask.Deadline = Deadline;
             Context.SelectedTask.Description = Description;
-            
+
+            if (Context.SelectedTask.IsDueToday())
+            {
+                Context.DueToday++;
+            }
+            if (Context.SelectedTask.IsDueTomorrow())
+            {
+                Context.DueTomorrow++;
+            }
+            if (Context.SelectedTask.IsOverdue())
+            {
+                Context.Overdue++;
+            }
+            if (Context.SelectedTask.IsCompleted)
+            {
+                Context.Done++;
+            }
+            else
+            {
+                Context.ToBeDone++;
+            }
+
             Context.SaveDatabase();
 
             _ = MessageBox.Show("The task has been edited!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -12,7 +13,26 @@ namespace ToDoApp.ViewModels
 {
     public class ViewModelContext : ViewModelBase
     {
-        public Database Database { get; }
+        private Database _database;
+        public Database Database
+        {
+            get => _database;
+            set
+            {
+                _database = value;
+                if (_database != null)
+                {
+                    DueToday = _database.GetAllTasks().Where(task => task.IsDueToday()).ToList().Count;
+                    DueTomorrow = _database.GetAllTasks().Where(task => task.IsDueTomorrow()).ToList().Count;
+                    Overdue = _database.GetAllTasks().Where(task => task.IsOverdue()).ToList().Count;
+                    Done = _database.GetAllTasks().Where(task => task.IsCompleted).ToList().Count;
+                    ToBeDone = _database.GetAllTasks().Where(task => !task.IsCompleted).ToList().Count;
+                    _database.Initialize();
+                }
+                OnPropertyChanged(nameof(Database));
+            }
+        }
+
         public EActionType ActionType { get; set; }
         public Window OpenWindow { get; set; }
 
@@ -52,15 +72,147 @@ namespace ToDoApp.ViewModels
 
         public Category CategoryToFilterBy { get; set; }
 
-        public ViewModelContext(Database database)
+        private int _dueToday;
+        private int _dueTomorrow;
+        private int _overdue;
+        private int _done;
+        private int _toBeDone;
+
+        public int DueToday
         {
-            Database = database;
-            Database.Initialize();
+            get => _dueToday;
+            set
+            {
+                _dueToday = value;
+                LabelDueToday = "Tasks due today: " + _dueToday;
+            }
+        }
+        public int DueTomorrow
+        {
+            get => _dueTomorrow;
+            set
+            {
+                _dueTomorrow = value;
+                LabelDueTomorrow = "Tasks due tomorrow: " + _dueTomorrow;
+            }
+        }
+        public int Overdue
+        {
+            get => _overdue;
+            set
+            {
+                _overdue = value;
+                LabelOverdue = "Tasks overdue: " + _overdue;
+            }
+        }
+        public int Done
+        {
+            get => _done; set
+            {
+                _done = value;
+                LabelDone = "Tasks done: " + _done;
+            }
+        }
+        public int ToBeDone
+        {
+            get => _toBeDone;
+            set
+            {
+                _toBeDone = value;
+                LabelToBeDone = "Tasks to be done: " + _toBeDone;
+            }
+        }
+
+        private string _labelDueToday = "";
+        private string _labelDueTomorrow = "";
+        private string _labelOverdue = "";
+        private string _labelDone = "";
+        private string _labelToBeDone = "";
+
+        public string LabelDueToday
+        {
+            get => _labelDueToday;
+            set
+            {
+                _labelDueToday = value;
+                OnPropertyChanged(nameof(LabelDueToday));
+            }
+        }
+
+        public string LabelDueTomorrow
+        {
+            get => _labelDueTomorrow;
+            set
+            {
+                _labelDueTomorrow = value;
+                OnPropertyChanged(nameof(LabelDueTomorrow));
+            }
+        }
+        
+        public string LabelOverdue
+        {
+            get => _labelOverdue;
+            set
+            {
+                _labelOverdue = value;
+                OnPropertyChanged(nameof(LabelOverdue));
+            }
+        }
+
+        public string LabelDone
+        {
+            get => _labelDone;
+            set
+            {
+                _labelDone = value;
+                OnPropertyChanged(nameof(LabelDone));
+            }
+        }
+
+        public string LabelToBeDone
+        {
+            get => _labelToBeDone;
+            set
+            {
+                _labelToBeDone = value;
+                OnPropertyChanged(nameof(LabelToBeDone));
+            }
+        }
+
+        public ViewModelContext()
+        {
+            // empty
         }
 
         public void SaveDatabase()
         {
-            SerializationService.Serialize(Database, Database.Name + ".xml");
+            SerializationService.Serialize(Database, Database.Path);
+        }
+
+        public void CreateDatabase()
+        {
+            CreateDatabaseView createDatabaseView = new CreateDatabaseView();
+            createDatabaseView.Show();
+        }
+
+        public void OpenDatabase()
+        {
+            OpenDatabaseView openDatabaseView = new OpenDatabaseView(this);
+            OpenWindow = openDatabaseView;
+            openDatabaseView.Show();
+        }
+
+        public void ArchiveDatabase()
+        {
+            string archivedDirectoryPath = @"Databases\Archived";
+
+            File.Delete(Database.Path);
+            Database.Path = archivedDirectoryPath + @"\" + Database.Name + ".xml";
+            SerializationService.Serialize(Database, Database.Path);
+
+            File.WriteAllText(@"Databases\last_opened.txt", "");
+
+            Database = null;
         }
 
         public void AddRootToDoList()
@@ -108,6 +260,13 @@ namespace ToDoApp.ViewModels
             SaveDatabase();
         }
 
+        public void ChangePathOfSelectedToDoList()
+        {
+            ChangePathView changePathView = new ChangePathView(this);
+            OpenWindow = changePathView;
+            changePathView.Show();
+        }
+
         public void AddTask()
         {
             ActionType = EActionType.Add;
@@ -136,6 +295,8 @@ namespace ToDoApp.ViewModels
         public void SetDoneSelectedTask()
         {
             SelectedTask.IsCompleted = true;
+            Done++;
+            ToBeDone--;
             SaveDatabase();
         }
 

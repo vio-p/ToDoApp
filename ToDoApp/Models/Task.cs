@@ -74,7 +74,7 @@ namespace ToDoApp.Models
 
         [XmlAttribute]
         public DateTime DateFinished { get; set; }
-        
+
         private bool _isCompleted;
         [XmlAttribute]
         public bool IsCompleted
@@ -117,12 +117,22 @@ namespace ToDoApp.Models
 
         public bool IsOverdue()
         {
-            return !IsCompleted && Deadline.Date < DateTime.Now.Date;
+            return !IsCompleted && Deadline.Date < DateTime.Today;
         }
 
         public bool IsUncompletedWithFutureDeadline()
         {
-            return !IsCompleted && Deadline.Date > DateTime.Now.Date;
+            return !IsCompleted && Deadline.Date > DateTime.Today;
+        }
+
+        public bool IsDueToday()
+        {
+            return Deadline.Date == DateTime.Today;
+        }
+
+        public bool IsDueTomorrow()
+        {
+            return Deadline.Date == DateTime.Today.AddDays(1);
         }
     }
 }

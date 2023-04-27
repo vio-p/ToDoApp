@@ -38,7 +38,10 @@ namespace ToDoApp.ViewModels
                         {
                             Categories[index].Id = 1;
                         }
-                        Categories[index].Id = Categories[index - 1].Id + 1;
+                        else
+                        {
+                            Categories[index].Id = Categories[index - 1].Id + 1;
+                        }
                     }
                 }
             }

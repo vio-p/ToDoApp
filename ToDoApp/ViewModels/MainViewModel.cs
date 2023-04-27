@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -74,15 +75,19 @@ namespace ToDoApp.ViewModels
 
             #region ICommandPropertyInitializations
             // File menu commands
+            OpenDatabaseCommand = new RelayCommand(Context.OpenDatabase);
+            NewDatabaseCommand = new RelayCommand(Context.CreateDatabase);
+            ArchiveDatabaseCommand = new RelayCommand(Context.ArchiveDatabase, parameter => Context.Database != null);
             ExitCommand = new RelayCommand(Exit);
             
             // To Do List menu commands
-            AddRootTDLCommand = new RelayCommand(Context.AddRootToDoList);
+            AddRootTDLCommand = new RelayCommand(Context.AddRootToDoList, parameter => Context.Database != null);
             AddSubTDLCommand = new RelayCommand(Context.AddSubToDoList, parameter => Context.SelectedToDoList != null);
             EditTDLCommand = new RelayCommand(Context.EditSelectedToDoList, parameter => Context.SelectedToDoList != null);
             DeleteTDLCommand = new RelayCommand(Context.DeleteSelectedToDoList, parameter => Context.SelectedToDoList != null);
             MoveUpTDLCommand = new RelayCommand(Context.MoveUpSelectedToDoList, parameter => Context.SelectedToDoList != null);
             MoveDownTDLCommand = new RelayCommand(Context.MoveDownSelectedToDoList, parameter => Context.SelectedToDoList != null);
+            ChangePathCommand = new RelayCommand(Context.ChangePathOfSelectedToDoList, parameter => Context.SelectedToDoList != null);
 
             // Task menu commands
             AddTaskCommand = new RelayCommand(Context.AddTask, parameter => Context.SelectedToDoList != null);
@@ -91,18 +96,18 @@ namespace ToDoApp.ViewModels
             SetDoneTaskCommand = new RelayCommand(Context.SetDoneSelectedTask, parameter => Context.SelectedTask != null && !Context.SelectedTask.IsCompleted);
             MoveUpTaskCommand = new RelayCommand(Context.MoveUpSelectedTask, parameter => Context.SelectedTask != null);
             MoveDownTaskCommand = new RelayCommand(Context.MoveDownSelectedTask, parameter => Context.SelectedTask != null);
-            ManageCategoriesCommand = new RelayCommand(Context.ShowManageCategoriesView);
-            FindTaskCommand = new RelayCommand(Context.ShowFindTaskView);
+            ManageCategoriesCommand = new RelayCommand(Context.ShowManageCategoriesView, parameter => Context.Database != null);
+            FindTaskCommand = new RelayCommand(Context.ShowFindTaskView, parameter => Context.Database != null);
 
             // View menu commands
-            SortByPriorityCommand = new RelayCommand(Context.SortByPriority);
-            SortByDeadlineCommand = new RelayCommand(Context.SortByDeadline);
-            FilterByCategoryCommand = new RelayCommand(Context.FilterByCategory);
-            FilterCompletedCommand = new RelayCommand(Context.FilterCompleted);
-            FilterCompletedLateCommand = new RelayCommand(Context.FilterCompletedLate);
-            FilterOverdueCommand = new RelayCommand(Context.FilterOverdue);
-            FilterUncompletedWithFutureDeadlineCommand = new RelayCommand(Context.FilterUncompletedWithFutureDeadline);
-            StatisticsCommand = new RelayCommand(ModifyStatisticsVisibility);
+            SortByPriorityCommand = new RelayCommand(Context.SortByPriority, parameter => Context.Database != null);
+            SortByDeadlineCommand = new RelayCommand(Context.SortByDeadline, parameter => Context.Database != null);
+            FilterByCategoryCommand = new RelayCommand(Context.FilterByCategory, parameter => Context.Database != null);
+            FilterCompletedCommand = new RelayCommand(Context.FilterCompleted, parameter => Context.Database != null);
+            FilterCompletedLateCommand = new RelayCommand(Context.FilterCompletedLate, parameter => Context.Database != null);
+            FilterOverdueCommand = new RelayCommand(Context.FilterOverdue, parameter => Context.Database != null);
+            FilterUncompletedWithFutureDeadlineCommand = new RelayCommand(Context.FilterUncompletedWithFutureDeadline, parameter => Context.Database != null);
+            StatisticsCommand = new RelayCommand(ModifyStatisticsVisibility); // should also be conditioned by having an open database
 
             // Help menu commands
             AboutCommand = new RelayCommand(ShowAbout);
@@ -112,13 +117,26 @@ namespace ToDoApp.ViewModels
 
         private void InitializeContext()
         {
-            // to be changed
-            Context = new ViewModelContext(SerializationService.Deserialize<Database>("Test.xml"));
+            Context = new ViewModelContext();
+
+            if (!Directory.Exists("Databases"))
+            {
+                _ = Directory.CreateDirectory("Databases");
+                _ = Directory.CreateDirectory(@"Databases\Archived");
+                _ = File.Create(@"Databases\last_opened.txt");
+            }
+
+            string lastOpenedPath = File.ReadAllText(@"Databases\last_opened.txt");
+            if (lastOpenedPath != "")
+            {
+                Context.Database = SerializationService.Deserialize<Database>(lastOpenedPath);
+            }
         }
 
         // command actions
         private void Exit()
         {
+            File.WriteAllText(@"Databases\last_opened.txt", Context.Database.Path);
             Application.Current.Shutdown();
         }
 
